@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -13,20 +14,15 @@ import (
 
 // graphapiEndpoint -
 const graphapiEndpoint string = "https://graph.microsoft.com"
+const oauthEndpoint string = "https://login.microsoftonline.com/%s/oauth2/token"
 
 // Client -
 type Client struct {
 	HostURL    string
 	HTTPClient *http.Client
 	Token      string
-}
-
-// AuthStruct -
-type AuthStruct struct {
-	grantType    string `json:"grant_type"`
-	clientID     string `json:"client_id"`
-	clientSecret string `json:"client_secret"`
-	resource     string `json:"resource"`
+	Version    string
+	Beta       string
 }
 
 // AuthResponse -
@@ -40,23 +36,23 @@ func APIClient(tenantID string, clientID string, clientSecret string) (*Client, 
 
 	c := Client{
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
-		// Default Hashicups URL
-		HostURL: fmt.Sprintf("https://login.microsoftonline.com/%s/oauth2/token", tenantID),
+		HostURL:    graphapiEndpoint,
+		Version:    "v1.0",
+		Beta:       "beta",
 	}
 
-	rb, err := json.Marshal(AuthStruct{
-		grantType:    "client_credentials",
-		clientID:     clientID,
-		clientSecret: clientSecret,
-		resource:     graphapiEndpoint,
-	})
+	rb := url.Values{}
+	rb.Set("grant_type", "client_credentials")
+	rb.Set("client_id", clientID)
+	rb.Set("client_secret", clientSecret)
+	rb.Set("resource", graphapiEndpoint)
 
-	req, err := http.NewRequest("POST", c.HostURL, strings.NewReader(string(rb)))
+	req, err := http.NewRequest("POST", fmt.Sprintf(oauthEndpoint, tenantID), strings.NewReader(rb.Encode()))
+
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
 			Summary:  "Unable to create oauth request",
-			Detail:   fmt.Sprintf(string(rb)),
 		})
 		return nil, diags
 	}
