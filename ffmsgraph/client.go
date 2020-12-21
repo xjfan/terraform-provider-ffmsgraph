@@ -8,8 +8,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 )
 
 // graphapiEndpoint -
@@ -31,8 +29,7 @@ type AuthResponse struct {
 }
 
 // APIClient -
-func APIClient(tenantID string, clientID string, clientSecret string) (*Client, diag.Diagnostics) {
-	var diags diag.Diagnostics
+func APIClient(tenantID string, clientID string, clientSecret string) (*Client, error) {
 
 	c := Client{
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
@@ -50,11 +47,7 @@ func APIClient(tenantID string, clientID string, clientSecret string) (*Client, 
 	req, err := http.NewRequest("POST", fmt.Sprintf(oauthEndpoint, tenantID), strings.NewReader(rb.Encode()))
 
 	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Unable to create oauth request",
-		})
-		return nil, diags
+		return nil, err
 	}
 
 	body, err := c.doRequest(req)
@@ -63,12 +56,7 @@ func APIClient(tenantID string, clientID string, clientSecret string) (*Client, 
 	ar := AuthResponse{}
 	err = json.Unmarshal(body, &ar)
 	if err != nil {
-		diags = append(diags, diag.Diagnostic{
-			Severity: diag.Error,
-			Summary:  "Unable to convert to json",
-			Detail:   fmt.Sprintf(string(body)),
-		})
-		return nil, diags
+		return nil, err
 	}
 
 	c.Token = ar.Token
