@@ -13,8 +13,14 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"ffmsgraph_group": DataAadGroup(),
 		},
-		ResourcesMap: map[string]*schema.Resource{},
+		ResourcesMap: map[string]*schema.Resource{
+			"ffmsgraph_group": ResourceAadGroup(),
+		},
 		Schema: map[string]*schema.Schema{
+			"object_id": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 			"tenant_id": {
 				Type:     schema.TypeString,
 				Required: true,
@@ -36,11 +42,12 @@ func Provider() *schema.Provider {
 func configureProvider(ctx context.Context, d *schema.ResourceData) (interface{}, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+	objectID := d.Get("object_id").(string)
 	tenantID := d.Get("tenant_id").(string)
 	clientID := d.Get("client_id").(string)
 	clientSecret := d.Get("client_secret").(string)
 
-	client, err := APIClient(tenantID, clientID, clientSecret)
+	client, err := APIClient(objectID, tenantID, clientID, clientSecret)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,

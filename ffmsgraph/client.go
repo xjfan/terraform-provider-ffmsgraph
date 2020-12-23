@@ -21,6 +21,7 @@ type Client struct {
 	Token      string
 	Version    string
 	Beta       string
+	ObjectID   string
 }
 
 // AuthResponse -
@@ -29,13 +30,14 @@ type AuthResponse struct {
 }
 
 // APIClient -
-func APIClient(tenantID string, clientID string, clientSecret string) (*Client, error) {
+func APIClient(objectID string, tenantID string, clientID string, clientSecret string) (*Client, error) {
 
 	c := Client{
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
 		HostURL:    graphapiEndpoint,
 		Version:    "v1.0",
 		Beta:       "beta",
+		ObjectID:   objectID,
 	}
 
 	rb := url.Values{}
@@ -77,7 +79,7 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode <= 200 && res.StatusCode >= 299 {
 		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 	}
 

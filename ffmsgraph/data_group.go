@@ -32,8 +32,8 @@ func dataAadGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	var diags diag.Diagnostics
 	c := m.(*Client)
 
-	display_name := d.Get("display_name").(string)
-	aadGroup, _ := c.getAadGroup(display_name)
+	displayName := d.Get("display_name").(string)
+	aadGroup, _ := c.getAadGroupWithName(displayName)
 
 	if err := d.Set("id", aadGroup.ID); err != nil {
 		return diag.FromErr(err)
