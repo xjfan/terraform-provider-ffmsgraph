@@ -12,6 +12,7 @@ func Provider() *schema.Provider {
 	p := &schema.Provider{
 		DataSourcesMap: map[string]*schema.Resource{
 			"ffmsgraph_group": DataAadGroup(),
+			"ffmsgraph_user":  DataAadUser(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"ffmsgraph_group": ResourceAadGroup(),

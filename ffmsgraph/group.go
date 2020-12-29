@@ -14,8 +14,8 @@ type AadGroup struct {
 	DisplayName string
 }
 
-// QueryValue -
-type QueryValue struct {
+// QueryValueAadGroup -
+type QueryValueAadGroup struct {
 	Value []struct {
 		ID          string `json:"id"`
 		Description string `json:"description"`
@@ -24,7 +24,7 @@ type QueryValue struct {
 }
 
 // Get AAD group -
-func (c *Client) getAadGroupWithName(displayName string) (*AadGroup, error) {
+func (c *Client) getAadGroupByName(displayName string) (*AadGroup, error) {
 
 	filter := "?$filter=displayName%20eq%20"
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/%s%s'%s'", c.HostURL, c.Version, "groups", filter, displayName), nil)
@@ -38,7 +38,7 @@ func (c *Client) getAadGroupWithName(displayName string) (*AadGroup, error) {
 		return nil, err
 	}
 
-	var queryValue QueryValue
+	var queryValue QueryValueAadGroup
 	err = json.Unmarshal(body, &queryValue)
 	if err != nil {
 		return nil, err

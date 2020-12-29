@@ -7,44 +7,44 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
-func DataAadGroup() *schema.Resource {
+func DataAadUser() *schema.Resource {
 	return &schema.Resource{
-		ReadContext: dataAadGroupRead,
+		ReadContext: dataAadUserRead,
 
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"description": {
+			"mail": {
 				Type:     schema.TypeString,
-				Computed: true,
+				Required: true,
 			},
 			"display_name": {
 				Type:     schema.TypeString,
-				Required: true,
+				Computed: true,
 			},
 		},
 	}
 }
 
-func dataAadGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+func dataAadUserRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 	c := m.(*Client)
 
-	displayName := d.Get("display_name").(string)
-	aadGroup, _ := c.getAadGroupByName(displayName)
+	mail := d.Get("mail").(string)
+	aadUser, _ := c.getAadGroupByMail(mail)
 
-	if err := d.Set("id", aadGroup.ID); err != nil {
+	if err := d.Set("id", aadUser.ID); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("description", aadGroup.Description); err != nil {
+	if err := d.Set("mail", aadUser.Mail); err != nil {
 		return diag.FromErr(err)
 	}
-	if err := d.Set("display_name", aadGroup.DisplayName); err != nil {
+	if err := d.Set("display_name", aadUser.DisplayName); err != nil {
 		return diag.FromErr(err)
 	}
-	d.SetId(aadGroup.ID)
+	d.SetId(aadUser.ID)
 
 	return diags
 }
