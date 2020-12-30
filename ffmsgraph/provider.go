@@ -15,7 +15,8 @@ func Provider() *schema.Provider {
 			"ffmsgraph_user":  DataAadUser(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
-			"ffmsgraph_group": ResourceAadGroup(),
+			"ffmsgraph_group":        ResourceAadGroup(),
+			"ffmsgraph_group_member": ResourceAadGroupMember(),
 		},
 		Schema: map[string]*schema.Schema{
 			"object_id": {

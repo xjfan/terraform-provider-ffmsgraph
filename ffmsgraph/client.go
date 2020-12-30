@@ -70,6 +70,7 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
+		fmt.Println("HTTP call failed:", err)
 		return nil, err
 	}
 	defer res.Body.Close()
@@ -79,7 +80,7 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 		return nil, err
 	}
 
-	if res.StatusCode <= 200 && res.StatusCode >= 299 {
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
 		return nil, fmt.Errorf("status: %d, body: %s", res.StatusCode, body)
 	}
 
