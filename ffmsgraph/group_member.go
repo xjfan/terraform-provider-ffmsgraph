@@ -40,10 +40,14 @@ func (c *Client) getAadGroupMember(groupID string, memberID string) (*AadGroupMe
 		return nil, err
 	}
 
-	aadGroupMember := AadGroupMember{
-		ID: queryValue.Value[0].ID,
+	if len(queryValue.Value) == 1 {
+		aadGroupMember := AadGroupMember{
+			ID: queryValue.Value[0].ID,
+		}
+		return &aadGroupMember, nil
+	} else {
+		return nil, fmt.Errorf("Can't find [%s] in [%s]", memberID, groupID)
 	}
-	return &aadGroupMember, nil
 }
 
 // Create AAD group member -
@@ -51,9 +55,12 @@ func (c *Client) createAadGroupMember(groupID string, memberID string) error {
 
 	member := []string{fmt.Sprintf("%s/%s/%s/%s", c.HostURL, c.Version, "directoryObjects", memberID)}
 
-	requestBody, _ := json.Marshal(map[string]interface{}{
+	requestBody, err := json.Marshal(map[string]interface{}{
 		"members@odata.bind": member,
 	})
+	if err != nil {
+		return err
+	}
 
 	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s/%s/%s", c.HostURL, c.Version, "groups", groupID), bytes.NewBuffer(requestBody))
 	req.Header.Add("Authorization", c.Token)

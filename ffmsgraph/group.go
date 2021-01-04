@@ -128,7 +128,7 @@ func (c *Client) deleteAadGroup(ID string) error {
 	}
 
 	body, err := c.doRequest(req)
-	if err != nil && body != nil {
+	if err != nil && body == nil {
 		return err
 	}
 

@@ -43,21 +43,25 @@ func resourceAadGroupCreate(ctx context.Context, d *schema.ResourceData, m inter
 	if aadGroup != nil && err == nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "This AadGroup existed!",
+			Summary:  "This AadGroup existed in AAD!",
 		})
 		return diags
 	} else if aadGroup == nil && err == nil {
-		aadGroup, _ := c.createAadGroup(displayName)
-
+		aadGroup, err := c.createAadGroup(displayName)
+		if err != nil {
+			diags = append(diags, diag.Diagnostic{
+				Severity: diag.Error,
+				Summary:  err.Error(),
+			})
+			return diags
+		}
 		d.SetId(aadGroup.ID)
-
 		resourceAadGroupRead(ctx, d, m)
-
 		return diags
 	} else {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Mutiple AadGroup with same name existed!",
+			Summary:  err.Error(),
 		})
 		return diags
 	}
@@ -71,17 +75,15 @@ func resourceAadGroupRead(ctx context.Context, d *schema.ResourceData, m interfa
 
 	aadGroup, err := c.getAadGroup(aadGroupID)
 	if err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  err.Error(),
+		})
+		return diags
 	}
-	if err := d.Set("id", aadGroup.ID); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("description", aadGroup.Description); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("display_name", aadGroup.DisplayName); err != nil {
-		return diag.FromErr(err)
-	}
+	d.Set("id", aadGroup.ID)
+	d.Set("description", aadGroup.Description)
+	d.Set("display_name", aadGroup.DisplayName)
 	return diags
 }
 
@@ -93,7 +95,11 @@ func resourceAadGroupDelete(ctx context.Context, d *schema.ResourceData, m inter
 
 	err := c.deleteAadGroup(aadGroupID)
 	if err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  err.Error(),
+		})
+		return diags
 	}
 
 	d.SetId("")

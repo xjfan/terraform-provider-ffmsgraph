@@ -63,7 +63,7 @@ func resourceAadGroupMemberRead(ctx context.Context, d *schema.ResourceData, m i
 	if len(s) != 2 {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
-			Summary:  "Unable to parse ID",
+			Summary:  "Unable to parse ID: [groupID:memberID]",
 		})
 		return diags
 	}
@@ -72,15 +72,18 @@ func resourceAadGroupMemberRead(ctx context.Context, d *schema.ResourceData, m i
 	memberID := s[1]
 
 	aadGroupMember, err := c.getAadGroupMember(groupID, memberID)
-	if err != nil {
-		return diag.FromErr(err)
+	if aadGroupMember != nil && err == nil {
+		d.Set("group_id", groupID)
+		d.Set("member_id", aadGroupMember.ID)
+		return diags
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  err.Error(),
+		})
+		return diags
 	}
-	if err := d.Set("group_id", groupID); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("member_id", aadGroupMember.ID); err != nil {
-		return diag.FromErr(err)
-	}
+
 	return diags
 }
 
@@ -93,7 +96,11 @@ func resourceAadGroupMemberDelete(ctx context.Context, d *schema.ResourceData, m
 
 	err := c.deleteAadGroupMember(groupID, memberID)
 	if err != nil {
-		return diag.FromErr(err)
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  err.Error(),
+		})
+		return diags
 	}
 
 	d.SetId("")

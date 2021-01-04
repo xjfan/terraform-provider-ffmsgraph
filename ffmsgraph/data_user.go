@@ -33,17 +33,18 @@ func dataAadUserRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	c := m.(*Client)
 
 	mail := d.Get("mail").(string)
-	aadUser, _ := c.getAadGroupByMail(mail)
+	aadUser, err := c.getAadGroupByMail(mail)
+	if err != nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  err.Error(),
+		})
+		return diags
+	}
+	d.Set("id", aadUser.ID)
+	d.Set("mail", aadUser.Mail)
+	d.Set("display_name", aadUser.DisplayName)
 
-	if err := d.Set("id", aadUser.ID); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("mail", aadUser.Mail); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("display_name", aadUser.DisplayName); err != nil {
-		return diag.FromErr(err)
-	}
 	d.SetId(aadUser.ID)
 
 	return diags

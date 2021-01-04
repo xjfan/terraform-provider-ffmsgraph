@@ -43,10 +43,16 @@ func (c *Client) getAadGroupByMail(mail string) (*AadUser, error) {
 		return nil, err
 	}
 
-	aadUser := AadUser{
-		ID:          queryValue.Value[0].ID,
-		Mail:        queryValue.Value[0].Mail,
-		DisplayName: queryValue.Value[0].DisplayName,
+	if len(queryValue.Value) == 1 {
+		aadUser := AadUser{
+			ID:          queryValue.Value[0].ID,
+			Mail:        queryValue.Value[0].Mail,
+			DisplayName: queryValue.Value[0].DisplayName,
+		}
+		return &aadUser, nil
+	} else if len(queryValue.Value) == 0 {
+		return nil, fmt.Errorf("Can't query this User: %s", mail)
+	} else {
+		return nil, fmt.Errorf("Mutiple Duplicated AadUser: %s, length: %s", mail, len(queryValue.Value))
 	}
-	return &aadUser, nil
 }

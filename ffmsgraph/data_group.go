@@ -33,17 +33,25 @@ func dataAadGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	c := m.(*Client)
 
 	displayName := d.Get("display_name").(string)
-	aadGroup, _ := c.getAadGroupByName(displayName)
+	aadGroup, err := c.getAadGroupByName(displayName)
+	if aadGroup != nil && err == nil {
+		d.Set("id", aadGroup.ID)
+		d.Set("description", aadGroup.Description)
+		d.Set("display_name", aadGroup.DisplayName)
+	} else if aadGroup == nil && err == nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Can't find this User!",
+		})
+		return diags
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  err.Error(),
+		})
+		return diags
+	}
 
-	if err := d.Set("id", aadGroup.ID); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("description", aadGroup.Description); err != nil {
-		return diag.FromErr(err)
-	}
-	if err := d.Set("display_name", aadGroup.DisplayName); err != nil {
-		return diag.FromErr(err)
-	}
 	d.SetId(aadGroup.ID)
 
 	return diags
