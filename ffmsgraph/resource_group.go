@@ -12,7 +12,9 @@ func ResourceAadGroup() *schema.Resource {
 		CreateContext: resourceAadGroupCreate,
 		ReadContext:   resourceAadGroupRead,
 		DeleteContext: resourceAadGroupDelete,
-
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 		Schema: map[string]*schema.Schema{
 			"id": {
 				Type:     schema.TypeString,
@@ -36,13 +38,29 @@ func resourceAadGroupCreate(ctx context.Context, d *schema.ResourceData, m inter
 	c := m.(*Client)
 
 	displayName := d.Get("display_name").(string)
-	aadGroup, _ := c.createAadGroup(displayName)
 
-	d.SetId(aadGroup.ID)
+	aadGroup, err := c.getAadGroupByName(displayName)
+	if aadGroup != nil && err == nil {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "This AadGroup existed!",
+		})
+		return diags
+	} else if aadGroup == nil && err == nil {
+		aadGroup, _ := c.createAadGroup(displayName)
 
-	resourceAadGroupRead(ctx, d, m)
+		d.SetId(aadGroup.ID)
 
-	return diags
+		resourceAadGroupRead(ctx, d, m)
+
+		return diags
+	} else {
+		diags = append(diags, diag.Diagnostic{
+			Severity: diag.Error,
+			Summary:  "Mutiple AadGroup with same name existed!",
+		})
+		return diags
+	}
 }
 
 func resourceAadGroupRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {

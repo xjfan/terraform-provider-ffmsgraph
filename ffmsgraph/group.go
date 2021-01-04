@@ -44,12 +44,18 @@ func (c *Client) getAadGroupByName(displayName string) (*AadGroup, error) {
 		return nil, err
 	}
 
-	aadGroup := AadGroup{
-		ID:          queryValue.Value[0].ID,
-		Description: queryValue.Value[0].Description,
-		DisplayName: queryValue.Value[0].DisplayName,
+	if len(queryValue.Value) == 1 {
+		aadGroup := AadGroup{
+			ID:          queryValue.Value[0].ID,
+			Description: queryValue.Value[0].Description,
+			DisplayName: queryValue.Value[0].DisplayName,
+		}
+		return &aadGroup, nil
+	} else if len(queryValue.Value) == 0 {
+		return nil, nil
+	} else {
+		return nil, fmt.Errorf("Mutiple Duplicated AadGroup: %s, length: %s", displayName, len(queryValue.Value))
 	}
-	return &aadGroup, nil
 }
 
 // Get AAD group -

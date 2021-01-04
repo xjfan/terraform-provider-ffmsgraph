@@ -14,7 +14,9 @@ func ResourceAadGroupMember() *schema.Resource {
 		CreateContext: resourceAadGroupMemberCreate,
 		ReadContext:   resourceAadGroupMemberRead,
 		DeleteContext: resourceAadGroupMemberDelete,
-
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 		Schema: map[string]*schema.Schema{
 			"group_id": {
 				Type:     schema.TypeString,
