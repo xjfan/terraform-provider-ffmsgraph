@@ -30,10 +30,10 @@ The credential for provider should be managed by Data Infra Team
 
 ```hcl
 provider "ffmsgraph" {
-  object_id           = ""
-  tenant_id           = ""
-  client_id           = ""
-  client_secret       = ""
+  object_id           = "" // env: FFMSGRAPH_AZURE_OBJECT_ID, ARM_OBJECT_ID
+  tenant_id           = "" // env: FFMSGRAPH_AZURE_TENANT_ID, ARM_TENANT_ID
+  client_id           = "" // env: FFMSGRAPH_AZURE_CLIENT_ID, ARM_CLIENT_ID
+  client_secret       = "" // env: FFMSGRAPH_AZURE_CLIENT_SECRET, ARM_CLIENT_SECRET
 }
 ```
 
