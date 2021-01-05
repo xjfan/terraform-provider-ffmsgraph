@@ -56,8 +56,8 @@ $ go build -o ~/.terraform.d/plugins/data-infra/xjfan/ffmsgraph/1.0.0/darwin_amd
 terraform {
   required_providers {
     msgraph = {
-      source = "data-infra/xjfan/ffmsgraph"
-      version = "1.0.0"
+      source = "hashicorp.com/xjfan/ffmsgraph"
+      version = "1.0"
     }
   }
 }
