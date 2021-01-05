@@ -1,6 +1,15 @@
-build-dev:
-	@[ "${version}" ] || ( echo ">> please provide version=vX.Y.Z"; exit 1 )
-    go build -o ~/.terraform.d/plugins/example.com/xjfan/ffmsgraph/${version}/darwin_amd64/terraform-provider-ffmsgraph .
-.PHONY: build-dev
+HOSTNAME=hashicorp.com
+NAMESPACE=xjfan
+NAME=ffmsgraph
+BINARY=terraform-provider-${NAME}
+VERSION=1.0
+OS_ARCH=darwin_amd64
 
-# make build-dev version=v1.0.0
+default: install
+
+build:
+	go build -o ${BINARY}
+
+install: build
+	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
+	mv ${BINARY} ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
