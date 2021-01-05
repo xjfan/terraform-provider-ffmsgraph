@@ -85,7 +85,7 @@ func (c *Client) getAadGroup(ID string) (*AadGroup, error) {
 // Create AAD group -
 func (c *Client) createAadGroup(displayName string) (*AadGroup, error) {
 
-	owners := []string{fmt.Sprintf("%s/%s/%s/%s", c.HostURL, c.Version, "directoryObjects", "1c41b7f8-cbd3-4a31-84fd-8c57028ea49e"), fmt.Sprintf("%s/%s/%s/%s", c.HostURL, c.Version, "directoryObjects", c.ObjectID)}
+	owners := []string{fmt.Sprintf("%s/%s/%s/%s", c.HostURL, c.Version, "directoryObjects", c.ObjectID)}
 
 	requestBody, _ := json.Marshal(map[string]interface{}{
 		"displayName":       displayName,
