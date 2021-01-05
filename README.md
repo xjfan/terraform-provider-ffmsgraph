@@ -40,7 +40,7 @@ provider "ffmsgraph" {
 ## Tips
 The following features and limitations need to be known before implemetation:
 - Don't support to create duplicated name for AAD group (Actually it allows officially via GraphAPI)
-- Each Creation AAD group by this provider will bind new owner [object_id of provider] for management
+- Each Creation AAD group by this provider will bind provider tenant as owner for management
 - The schema of resources haven't totally followed the schema of Azure Microsoft Graph, just use what we need
 
 ## How to test
