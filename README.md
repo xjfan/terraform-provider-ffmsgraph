@@ -128,6 +128,7 @@ resource "ffmsgraph_group_member" "member3" {
 
 ## Todo
 
+- [ ] To add ffmsgraph_invited_user resource module
 - [ ] To add test module
 - [ ] Work on integration with other terraform provider
 - [ ] OAuth2 tokens in backend storage
