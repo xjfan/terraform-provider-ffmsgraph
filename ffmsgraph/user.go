@@ -23,7 +23,7 @@ type QueryValueAadUser struct {
 }
 
 // Get AAD user -
-func (c *Client) getAadGroupByMail(mail string) (*AadUser, error) {
+func (c *Client) getAadUserByMail(mail string) (*AadUser, error) {
 
 	filter := "?$filter=mail%20eq%20"
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/%s%s'%s'", c.HostURL, c.Version, "users", filter, mail), nil)

@@ -33,7 +33,7 @@ func dataAadUserRead(ctx context.Context, d *schema.ResourceData, m interface{})
 	c := m.(*Client)
 
 	mail := d.Get("mail").(string)
-	aadUser, err := c.getAadGroupByMail(mail)
+	aadUser, err := c.getAadUserByMail(mail)
 	if err != nil {
 		diags = append(diags, diag.Diagnostic{
 			Severity: diag.Error,
