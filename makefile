@@ -11,10 +11,7 @@ build:
 	go build -o ${BINARY}
 
 build-linux:
-	GOOS=linux GOARCH=amd64 go build -o providers/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/linux_amd64/${BINARY}
-
-build-darwin:
-	GOOS=darwin GOARCH=amd64 go build -o providers/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/darwin_amd64/${BINARY}
+	GOOS=linux GOARCH=amd64 go build -o plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/linux_amd64/${BINARY}
 
 install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
