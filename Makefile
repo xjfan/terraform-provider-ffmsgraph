@@ -11,7 +11,7 @@ build:
 	go build -o ${BINARY}
 
 build-linux:
-	GOOS=linux GOARCH=amd64 go build -o plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/linux_amd64/${BINARY}
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/linux_amd64/${BINARY}
 
 install: build
 	mkdir -p ~/.terraform.d/plugins/${HOSTNAME}/${NAMESPACE}/${NAME}/${VERSION}/${OS_ARCH}
