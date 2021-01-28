@@ -48,16 +48,16 @@ The following features and limitations need to be known before implemetation:
 Terraform v0.13 and Go v1.14 are required.
 
 ```console
-$ git clone git@github.com:farfetch-internal/terraform-provider-ffmsgraph.git
-$ go build -o ~/.terraform.d/plugins/data-infra/xjfan/ffmsgraph/1.0.0/darwin_amd64/terraform-provider-ffmsgraph # MacOS
+$ git clone https://github.com/farfetch-internal/data-terraformprovider-ffmsgraph.git
+$ go build -o ~/.terraform.d/plugins/github.com/farfetch-internal/ffmsgraph/1.0.0/darwin_amd64/terraform-provider-ffmsgraph # MacOS
 ```
 
 ```console
 terraform {
   required_providers {
     msgraph = {
-      source = "hashicorp.com/xjfan/ffmsgraph"
-      version = "1.0"
+      source = "github.com/farfetch-internal/ffmsgraph"
+      version = "1.0.0"
     }
   }
 }
