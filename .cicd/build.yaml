@@ -23,3 +23,4 @@ jobs:
       tags: |
         latest
         1.$(Build.BuildNumber)
+        1.0.0
